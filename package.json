@@ -1,0 +1,49 @@
+{
+  "name": "then-cli",
+  "version": "0.1.0",
+  "description": "See what you saved, by year, and what happened to it. Local, read-only bookmark archaeology.",
+  "type": "module",
+  "bin": {
+    "then": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "scripts": {
+    "dev": "tsx src/cli.ts",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "verify": "node scripts/verify.mjs",
+    "make:gif": "node scripts/make-gif.mjs"
+  },
+  "license": "MIT",
+  "keywords": [
+    "bookmarks",
+    "chrome",
+    "history",
+    "cli",
+    "wayback"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RavaniRoshan/then-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/RavaniRoshan/then-cli/issues"
+  },
+  "homepage": "https://github.com/RavaniRoshan/then-cli#readme",
+  "devDependencies": {
+    "@types/node": "^26.6.11",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.2"
+  },
+  "dependencies": {
+    "@resvg/resvg-js": "^2.6.2"
+  }
+}

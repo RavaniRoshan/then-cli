@@ -1,0 +1,36 @@
+{
+  "checksum": "fixture-checksum",
+  "roots": {
+    "bookmark_bar": {
+      "children": [
+        { "date_added": "13038451200000000", "id": "2", "name": "A page that vanished", "type": "url", "url": "https://gone.example.com/a" },
+        { "date_added": "13038451200000000", "id": "3", "name": "Alpha project", "type": "url", "url": "https://github.com/alpha" },
+        { "date_added": "13038451200000000", "id": "4", "name": "Bot walled", "type": "url", "url": "https://blocked.example.com/x" }
+      ],
+      "date_added": "13038451200000000",
+      "id": "1",
+      "name": "Bookmarks bar",
+      "type": "folder"
+    },
+    "other": {
+      "children": [
+        { "date_added": "13236220800000000", "id": "6", "name": "Alpha project again", "type": "url", "url": "https://github.com/alpha/" },
+        { "date_added": "13236220800000000", "id": "7", "name": "A story I read", "type": "url", "url": "https://news.example.org/story" }
+      ],
+      "date_added": "13236220800000000",
+      "id": "5",
+      "name": "Other bookmarks",
+      "type": "folder"
+    },
+    "synced": {
+      "children": [
+        { "date_added": "13415587200000000", "id": "9", "name": "Recent post", "type": "url", "url": "https://today.example.net/post" }
+      ],
+      "date_added": "13415587200000000",
+      "id": "8",
+      "name": "Mobile bookmarks",
+      "type": "folder"
+    }
+  },
+  "version": 1
+}

@@ -1,0 +1,8 @@
+node_modules/
+dist/
+*.log
+.agents/
+.opencode/
+.DS_Store
+skills-lock.json
+test/fixtures/profile/Default/History
