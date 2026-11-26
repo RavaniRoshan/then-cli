@@ -14,12 +14,14 @@
     "node": ">=22.5.0"
   },
   "scripts": {
-    "dev": "tsx src/cli.ts",
     "build": "tsc",
-    "typecheck": "tsc --noEmit",
+    "dev": "tsx src/cli.ts",
+    "make:gif": "node scripts/make-gif.mjs",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm test",
     "test": "vitest run",
-    "verify": "node scripts/verify.mjs",
-    "make:gif": "node scripts/make-gif.mjs"
+    "typecheck": "tsc --noEmit",
+    "verify": "node scripts/verify.mjs"
   },
   "license": "MIT",
   "keywords": [
