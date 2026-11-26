@@ -17,7 +17,7 @@ export function classify(status: number | null, finalUrl: string, originalUrl: s
     const final = normalizeUrl(finalUrl);
     return final && final !== normalizeUrl(originalUrl) ? 'redirected' : 'alive';
   }
-  // AGENTS §9 lists404 and 410 as dead. Everything else (5xx, unlisted 4xx)
+  // AGENTS §9 lists 404 and 410 as dead. Everything else (5xx, unlisted 4xx)
   // stays unchecked: a transient server error is not link rot.
   if (status === 404 || status === 410) return 'dead';
   return 'unchecked';
