@@ -45,7 +45,7 @@ then                        # report, default profile
 then --year 2014            # open report at 2014
 then --no-check             # offline, instant
 then --redact               # strip full URLs from the report
-then card                   # write then-out/card.png + card.svg
+then card                   # write then-out/card.png + card.svg (+ OG variants)
 then rescue --dry-run       # list recoverable dead links
 then rescue --write         # write then-out/rescued-bookmarks.html
 ```
@@ -167,7 +167,7 @@ Base directories:
 
 ## 11. Card
 
-- 1080×1350 PNG, plus the SVG source.
+- 1080×1350 PNG, plus the SVG source and a 1200×630 Open Graph variant.
 - Dark background, one headline, three stats, six domain tiles.
 - Never include full URLs, titles, or folder names.
 - Footer: tool name and "ran locally, nothing uploaded".

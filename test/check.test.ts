@@ -34,6 +34,12 @@ describe('link classification', () => {
     expect(classify(410, '', 'https://a.test')).toBe('dead');
     expect(classify(null, '', 'https://a.test')).toBe('dead');
   });
+
+  it('never counts transient server errors as link rot', () => {
+    expect(classify(500, '', 'https://a.test')).toBe('unchecked');
+    expect(classify(503, '', 'https://a.test')).toBe('unchecked');
+    expect(classify(400, '', 'https://a.test')).toBe('unchecked');
+  });
 });
 
 describe('checkLinks with stubbed fetch', () => {

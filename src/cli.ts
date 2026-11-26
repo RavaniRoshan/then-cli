@@ -8,8 +8,9 @@ import { buildRows, type Joined } from './join.js';
 import { checkLinks } from './check.js';
 import { renderReport } from './report/html.js';
 import { renderCard } from './report/card.js';
-import { outputPath, openFile, writeText, ensureOutDir } from './output.js';
+import { openFile, writeText, ensureOutDir } from './output.js';
 import { rescue } from './rescue.js';
+import { refresh } from './join.js';
 
 const USAGE = `then — local bookmark archaeology
 
@@ -74,13 +75,20 @@ async function collect(options: Options): Promise<{ joined: Joined; cleanup: () 
   const joined = buildRows(bookmarks, history.visits, history.window);
 
   if (!options.noCheck) {
-    progress(`Checking ${new Set(bookmarks.map((bookmark) => bookmark.url)).size.toLocaleString()} links...`);
-    await checkLinks(joined.rows);
+    const unique = new Set(bookmarks.map((bookmark) => bookmark.url)).size;
+    progress(`Checking ${unique.toLocaleString()} links...`);
+    await checkLinks(joined.rows, (done, total) => {
+      if (process.stderr.isTTY) {
+        process.stderr.write(`\rChecked ${done.toLocaleString()}/${total.toLocaleString()} links`);
+      }
+    });
+    if (process.stderr.isTTY) process.stderr.write('\n');
   } else {
     progress('Offline mode: link checks skipped.');
   }
 
-  return { joined, cleanup: history.cleanup };
+  // Statuses changed inside checkLinks; recompute dead shares and the queue.
+  return { joined: refresh(joined), cleanup: history.cleanup };
 }
 
 function countUnique(rows: Row[]): number {
@@ -107,14 +115,15 @@ async function main(): Promise<void> {
 
     const path = writeText('report.html', renderReport(joined, {
       redact: options.redact,
-      checkedAt: new Date().toISOString(),
+      checkedAt: options.noCheck ? null : new Date().toISOString(),
       focusYear: options.year,
     }));
     process.stdout.write(`Wrote ${path}\n`);
     process.stdout.write(
       `${joined.stats.total.toLocaleString()} links · ${joined.stats.dead.toLocaleString()} dead · ${countUnique(joined.rows).toLocaleString()} unique URLs\n`,
     );
-    if (options.year !== undefined) openFile(path);
+    // PRD flow 1: open the report. Only on a terminal so scripts and tests stay quiet.
+    if (process.stdout.isTTY) openFile(path);
   } finally {
     cleanup();
   }

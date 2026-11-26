@@ -38,7 +38,8 @@ function openLabel(row: Row, data: Joined): string {
   if (row.visit.lastVisitAt) return `last opened ${row.visit.lastVisitAt.slice(0, 10)}`;
   if (!data.window.available) return 'history unavailable';
   const retained = windowLengthDays(data.window.start, data.window.end) ?? 0;
-  if (row.addedAt && data.window.start && row.addedAt >= data.window.start) {
+  if (row.addedAt && data.window.start && row.addedAt >= data.window.start &&
+      (!data.window.end || row.addedAt <= data.window.end)) {
     return 'never opened since saving';
   }
   return `not opened in the last ${retained} days`;
@@ -141,7 +142,9 @@ function yearPages(data: Joined, redact: boolean, focusYear: number): string {
   const years = data.stats.years.map((year) => year.year);
   const payload: Record<string, string> = {};
   for (const year of years) {
-    const rows = data.rows.filter((row) => (Number(row.addedAt.slice(0, 4)) || 0) === year);
+    const rows = data.rows
+      .filter((row) => (Number(row.addedAt.slice(0, 4)) || 0) === year)
+      .sort((a, b) => (a.addedAt || '9999').localeCompare(b.addedAt || '9999'));
     payload[String(year)] = rows.map((row) => rowHtml(row, data, redact)).join('');
   }
   const json = JSON.stringify(payload).replace(/</g, '\\u003c');
@@ -161,15 +164,16 @@ function yearPages(data: Joined, redact: boolean, focusYear: number): string {
   <script type="application/json" id="then-pages">${json}</script>`;
 }
 
-function footer(data: Joined, checkedAt: string): string {
+function footer(data: Joined, checkedAt: string | null): string {
   const retained = windowLengthDays(data.window.start, data.window.end);
   const history = data.window.available
     ? retained === null
       ? 'history available, window length unknown'
       : `history window ${retained} days (${data.window.start?.slice(0, 10)} to ${data.window.end?.slice(0, 10)})`
     : 'history unavailable';
+  const checked = checkedAt ? `checked ${checkedAt.slice(0, 10)}` : 'link checks skipped';
   return `<footer>
-    <p>${escapeHtml(history)} · checked ${escapeHtml(checkedAt.slice(0, 10))} · ${data.stats.unchecked.toLocaleString()} links unchecked</p>
+    <p>${escapeHtml(history)} · ${escapeHtml(checked)} · ${data.stats.unchecked.toLocaleString()} links unchecked</p>
     <p class="hint">"not opened in the last N days" means no visit exists inside the retained window. "never opened since saving" appears only when the save itself falls inside that window. A blocked link is not a dead link.</p>
   </footer>`;
 }
@@ -208,12 +212,12 @@ const SCRIPT = `
     body.innerHTML=payload[String(year)]||'<tr><td colspan="4">No links for this year.</td></tr>';
   }
   document.querySelectorAll('.tab,.year-row').forEach(function(b){b.addEventListener('click',function(){show(b.getAttribute('data-year'));});});
-  var first=document.querySelector('.tab');
-  if(first){show(first.getAttribute('data-year'));}
+  var selected=document.querySelector('.tab.active')||document.querySelector('.tab');
+  if(selected){show(selected.getAttribute('data-year'));}
 })();
 `;
 
-export function renderReport(data: Joined, options: { redact: boolean; checkedAt: string; focusYear?: number | undefined }): string {
+export function renderReport(data: Joined, options: { redact: boolean; checkedAt: string | null; focusYear?: number | undefined }): string {
   const stats: Stats = data.stats;
   const span = stats.earliestYear && stats.latestYear
     ? `${stats.earliestYear}–${stats.latestYear === stats.earliestYear ? stats.earliestYear : stats.latestYear}`

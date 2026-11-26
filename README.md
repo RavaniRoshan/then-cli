@@ -21,7 +21,7 @@ then --no-check
 
 ## What you get
 
-- **A private report.** `then-out/report.html` — header stats, a timeline by year, a graveyard of dead links, a regret queue, and one page per year.
+- **A private report.** `then-out/report.html` — header stats, a timeline by year, a graveyard of dead links, a regret queue, and one page per year. It opens itself when you run `then` from a terminal.
 - **A card.** `then card` writes `then-out/card.png` and `then-out/card.svg`. Counts, domains, and years only, never URLs.
 - **A rescue file.** `then rescue --write` writes `then-out/rescued-bookmarks.html`, importable by Chrome, Edge, and Brave.
 

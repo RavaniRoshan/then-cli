@@ -32,6 +32,8 @@ export type Joined = {
   regret: Row[];
 };
 
+const WINDOW_END_FLOOR = '9999-12-31T23:59:59.999Z';
+
 export function buildRows(
   bookmarks: Bookmark[],
   visitMap: Map<string, Visit>,
@@ -44,6 +46,14 @@ export function buildRows(
     status: { url: bookmark.url, state: 'unchecked' },
     duplicateCount: duplicates.get(bookmark.url) ?? 1,
   }));
+
+  return refresh({ rows, window });
+}
+
+// Recomputes every status-dependent number. Call again after link checks
+// mutate row.status, so dead shares and the regret queue reflect real checks.
+export function refresh(joined: Pick<Joined, 'rows' | 'window'>): Joined {
+  const { rows, window } = joined;
 
   const byYear = new Map<number, Row[]>();
   for (const row of rows) {
@@ -72,7 +82,11 @@ export function buildRows(
     : 0;
   const neverOpened = windowStart
     ? rows.filter(
-        (row) => row.visit.lastVisitAt === null && row.addedAt !== '' && row.addedAt >= windowStart,
+        (row) =>
+          row.visit.lastVisitAt === null &&
+          row.addedAt !== '' &&
+          row.addedAt >= windowStart &&
+          row.addedAt <= (window.end ?? WINDOW_END_FLOOR),
       ).length
     : 0;
 
@@ -91,7 +105,13 @@ export function buildRows(
 
   const regret = window.available
     ? rows
-        .filter((row) => row.visit.lastVisitAt === null && row.status.state !== 'dead')
+        .filter(
+          (row) =>
+            row.visit.lastVisitAt === null &&
+            (row.status.state === 'alive' ||
+              row.status.state === 'redirected' ||
+              row.status.state === 'blocked'),
+        )
         .sort((a, b) => (a.addedAt || '9999').localeCompare(b.addedAt || '9999'))
         .slice(0, 10)
     : [];
