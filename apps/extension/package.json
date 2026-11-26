@@ -1,0 +1,17 @@
+{
+  "name": "then-extension",
+  "version": "0.1.0",
+  "description": "then — local bookmark archaeology as a Chromium MV3 extension",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "vite build",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.1.40",
+    "typescript": "^7.0.2",
+    "vite": "^7.0.0"
+  }
+}

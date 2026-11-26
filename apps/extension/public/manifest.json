@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "then",
+  "version": "0.1.0",
+  "description": "See what you saved, by year, and what happened to it. Local, read-only bookmark archaeology. No telemetry.",
+  "permissions": ["bookmarks", "history", "downloads"],
+  "optional_host_permissions": ["http://*/*", "https://*/*"],
+  "host_permissions": ["https://archive.org/*", "https://web.archive.org/*"],
+  "background": { "service_worker": "background.js", "type": "module" },
+  "action": { "default_title": "then — build report" },
+  "content_security_policy": { "extension_pages": "script-src 'self'; object-src 'self'" }
+}
